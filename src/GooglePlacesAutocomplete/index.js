@@ -134,7 +134,7 @@ class GooglePlacesAutocomplete extends Component {
         type: 'text',
         placeholder,
         required,
-        fetchSuggestions: this.fetchSuggestions,
+        fetchSuggestions: () => this.fetchSuggestions(value),
       });
     }
 
