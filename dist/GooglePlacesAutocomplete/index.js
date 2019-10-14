@@ -180,7 +180,9 @@ var GooglePlacesAutocomplete = function (_Component) {
           type: 'text',
           placeholder: placeholder,
           required: required,
-          fetchSuggestions: this.fetchSuggestions
+          fetchSuggestions: function fetchSuggestions() {
+            return _this3.fetchSuggestions(value);
+          }
         });
       }
 
