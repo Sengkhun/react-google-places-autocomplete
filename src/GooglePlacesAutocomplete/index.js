@@ -12,7 +12,7 @@ import './index.css';
 class GooglePlacesAutocomplete extends Component {
   debouncedFetchSuggestions = debounce(this.fetchSuggestions, this.props.debounce); // eslint-disable-line react/destructuring-assignment
 
-  fetchSuggestions = value => {
+  fetchSuggestions = (value) => {
     const { autocompletionRequest } = this.props;
 
     this.setState({ loading: true });
@@ -134,7 +134,7 @@ class GooglePlacesAutocomplete extends Component {
         type: 'text',
         placeholder,
         required,
-        fetchSuggestions: this.fetchSuggestions
+        fetchSuggestions: this.fetchSuggestions,
       });
     }
 
