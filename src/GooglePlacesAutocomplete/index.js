@@ -10,7 +10,9 @@ import {
 import './index.css';
 
 class GooglePlacesAutocomplete extends Component {
-  fetchSuggestions = debounce((value) => {
+  debouncedFetchSuggestions = debounce(this.fetchSuggestions, this.props.debounce); // eslint-disable-line react/destructuring-assignment
+
+  fetchSuggestions = value => {
     const { autocompletionRequest } = this.props;
 
     this.setState({ loading: true });
@@ -21,7 +23,7 @@ class GooglePlacesAutocomplete extends Component {
       },
       this.fetchSuggestionsCallback,
     );
-  }, this.props.debounce); // eslint-disable-line react/destructuring-assignment
+  };
 
   constructor(props) {
     super(props);
@@ -37,6 +39,7 @@ class GooglePlacesAutocomplete extends Component {
     this.changeActiveSuggestion = this.changeActiveSuggestion.bind(this);
     this.changeValue = this.changeValue.bind(this);
     this.clearSuggestions = this.clearSuggestions.bind(this);
+    this.fetchSuggestions = this.fetchSuggestions.bind(this);
     this.fetchSuggestionsCallback = this.fetchSuggestionsCallback.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -71,7 +74,9 @@ class GooglePlacesAutocomplete extends Component {
     this.setState({ value });
 
     if (value.length > 0) {
-      this.fetchSuggestions(value);
+      if (this.props.debounce !== -1) {
+        this.debouncedFetchSuggestions(value);
+      }
     } else {
       this.setState({ suggestions: [] });
     }
@@ -129,6 +134,7 @@ class GooglePlacesAutocomplete extends Component {
         type: 'text',
         placeholder,
         required,
+        fetchSuggestions: this.fetchSuggestions
       });
     }
 
@@ -341,7 +347,7 @@ GooglePlacesAutocomplete.propTypes = {
 
 GooglePlacesAutocomplete.defaultProps = {
   autocompletionRequest: {},
-  debounce: 300,
+  debounce: -1,
   initialValue: '',
   inputClassName: '',
   inputStyle: {},
