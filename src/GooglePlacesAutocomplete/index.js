@@ -122,6 +122,7 @@ class GooglePlacesAutocomplete extends Component {
         placeholder,
         renderInput,
         required,
+        value: propValue,
       },
     } = this;
 
@@ -135,7 +136,7 @@ class GooglePlacesAutocomplete extends Component {
         type: 'text',
         placeholder,
         required,
-        fetchSuggestions: () => this.fetchSuggestions(value),
+        fetchSuggestions: () => this.fetchSuggestions(propValue || value),
       });
     }
 
@@ -253,7 +254,8 @@ class GooglePlacesAutocomplete extends Component {
   }
 
   handleKeyDown(event) {
-    const { activeSuggestion, suggestions, value } = this.state;
+    const { activeSuggestion, suggestions } = this.state;
+    const { value } = this.props;
 
     switch (event.key) {
       case 'Enter':
@@ -335,6 +337,7 @@ class GooglePlacesAutocomplete extends Component {
 GooglePlacesAutocomplete.propTypes = {
   autocompletionRequest: autocompletionRequestType,
   debounce: PropTypes.number,
+  value: PropTypes.string,
   initialValue: PropTypes.string,
   inputClassName: PropTypes.string,
   inputStyle: PropTypes.object,
@@ -355,6 +358,7 @@ GooglePlacesAutocomplete.defaultProps = {
   inputClassName: '',
   inputStyle: {},
   loader: null,
+  value: '',
   onSelect: () => {},
   placeholder: 'Address',
   renderInput: undefined,

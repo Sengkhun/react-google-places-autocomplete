@@ -166,7 +166,8 @@ var GooglePlacesAutocomplete = function (_Component) {
           inputStyle = _props.inputStyle,
           placeholder = _props.placeholder,
           renderInput = _props.renderInput,
-          required = _props.required;
+          required = _props.required,
+          propValue = _props.value;
 
 
       if (renderInput) {
@@ -183,7 +184,7 @@ var GooglePlacesAutocomplete = function (_Component) {
           placeholder: placeholder,
           required: required,
           fetchSuggestions: function fetchSuggestions() {
-            return _this3.fetchSuggestions(value);
+            return _this3.fetchSuggestions(propValue || value);
           }
         });
       }
@@ -310,8 +311,8 @@ var GooglePlacesAutocomplete = function (_Component) {
     value: function handleKeyDown(event) {
       var _state2 = this.state,
           activeSuggestion = _state2.activeSuggestion,
-          suggestions = _state2.suggestions,
-          value = _state2.value;
+          suggestions = _state2.suggestions;
+      var value = this.props.value;
 
 
       switch (event.key) {
