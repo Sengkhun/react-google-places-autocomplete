@@ -72,9 +72,10 @@ class GooglePlacesAutocomplete extends Component {
 
   changeValue(value) {
     this.setState({ value });
+    const { debounce: debo } = this.props;
 
     if (value.length > 0) {
-      if (this.props.debounce !== -1) {
+      if (debo !== -1) {
         this.debouncedFetchSuggestions(value);
       }
     } else {
@@ -252,13 +253,15 @@ class GooglePlacesAutocomplete extends Component {
   }
 
   handleKeyDown(event) {
-    const { activeSuggestion, suggestions } = this.state;
+    const { activeSuggestion, suggestions, value } = this.state;
 
     switch (event.key) {
       case 'Enter':
         event.preventDefault();
         if (activeSuggestion !== null) {
           this.onSuggestionSelect(suggestions[activeSuggestion]);
+        } else if (value.length > 0) {
+          this.fetchSuggestions(value);
         }
         break;
       case 'ArrowDown':

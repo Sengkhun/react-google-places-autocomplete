@@ -107,9 +107,11 @@ var GooglePlacesAutocomplete = function (_Component) {
     key: 'changeValue',
     value: function changeValue(value) {
       this.setState({ value: value });
+      var debo = this.props.debounce;
+
 
       if (value.length > 0) {
-        if (this.props.debounce !== -1) {
+        if (debo !== -1) {
           this.debouncedFetchSuggestions(value);
         }
       } else {
@@ -308,7 +310,8 @@ var GooglePlacesAutocomplete = function (_Component) {
     value: function handleKeyDown(event) {
       var _state2 = this.state,
           activeSuggestion = _state2.activeSuggestion,
-          suggestions = _state2.suggestions;
+          suggestions = _state2.suggestions,
+          value = _state2.value;
 
 
       switch (event.key) {
@@ -316,6 +319,8 @@ var GooglePlacesAutocomplete = function (_Component) {
           event.preventDefault();
           if (activeSuggestion !== null) {
             this.onSuggestionSelect(suggestions[activeSuggestion]);
+          } else if (value.length > 0) {
+            this.fetchSuggestions(value);
           }
           break;
         case 'ArrowDown':
