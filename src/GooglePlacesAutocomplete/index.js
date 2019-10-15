@@ -12,14 +12,15 @@ import './index.css';
 class GooglePlacesAutocomplete extends Component {
   debouncedFetchSuggestions = debounce(this.fetchSuggestions, this.props.debounce); // eslint-disable-line react/destructuring-assignment
 
-  fetchSuggestions = (value) => {
-    const { autocompletionRequest } = this.props;
+  fetchSuggestions = () => {
+    const { value } = this.state;
+    const { autocompletionRequest, value: propValue } = this.props;
 
     this.setState({ loading: true });
     this.placesService.getPlacePredictions(
       {
         ...autocompletionRequestBuilder(autocompletionRequest),
-        input: value,
+        input: value || propValue,
       },
       this.fetchSuggestionsCallback,
     );
@@ -76,7 +77,7 @@ class GooglePlacesAutocomplete extends Component {
 
     if (value.length > 0) {
       if (debo !== -1) {
-        this.debouncedFetchSuggestions(value);
+        this.debouncedFetchSuggestions();
       }
     } else {
       this.setState({ suggestions: [] });
@@ -122,7 +123,6 @@ class GooglePlacesAutocomplete extends Component {
         placeholder,
         renderInput,
         required,
-        value: propValue,
       },
     } = this;
 
@@ -136,7 +136,7 @@ class GooglePlacesAutocomplete extends Component {
         type: 'text',
         placeholder,
         required,
-        fetchSuggestions: () => this.fetchSuggestions(propValue || value),
+        fetchSuggestions: this.fetchSuggestions,
       });
     }
 
@@ -254,16 +254,16 @@ class GooglePlacesAutocomplete extends Component {
   }
 
   handleKeyDown(event) {
-    const { activeSuggestion, suggestions } = this.state;
-    const { value } = this.props;
+    const { activeSuggestion, suggestions, value } = this.state;
+    const { value: propValue } = this.props;
 
     switch (event.key) {
       case 'Enter':
         event.preventDefault();
         if (activeSuggestion !== null) {
           this.onSuggestionSelect(suggestions[activeSuggestion]);
-        } else if (value.length > 0) {
-          this.fetchSuggestions(value);
+        } else if (value.length > 0 || propValue.length > 0) {
+          this.fetchSuggestions();
         }
         break;
       case 'ArrowDown':
@@ -337,8 +337,8 @@ class GooglePlacesAutocomplete extends Component {
 GooglePlacesAutocomplete.propTypes = {
   autocompletionRequest: autocompletionRequestType,
   debounce: PropTypes.number,
-  value: PropTypes.string,
   initialValue: PropTypes.string,
+  value: PropTypes.string,
   inputClassName: PropTypes.string,
   inputStyle: PropTypes.object,
   loader: PropTypes.node,
@@ -355,10 +355,10 @@ GooglePlacesAutocomplete.defaultProps = {
   autocompletionRequest: {},
   debounce: -1,
   initialValue: '',
+  value: '',
   inputClassName: '',
   inputStyle: {},
   loader: null,
-  value: '',
   onSelect: () => {},
   placeholder: 'Address',
   renderInput: undefined,

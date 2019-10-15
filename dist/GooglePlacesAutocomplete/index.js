@@ -46,13 +46,16 @@ var GooglePlacesAutocomplete = function (_Component) {
 
     _this.debouncedFetchSuggestions = (0, _debounce2.default)(_this.fetchSuggestions, _this.props.debounce);
 
-    _this.fetchSuggestions = function (value) {
-      var autocompletionRequest = _this.props.autocompletionRequest;
+    _this.fetchSuggestions = function () {
+      var value = _this.state.value;
+      var _this$props = _this.props,
+          autocompletionRequest = _this$props.autocompletionRequest,
+          propValue = _this$props.value;
 
 
       _this.setState({ loading: true });
       _this.placesService.getPlacePredictions(_extends({}, (0, _autocompletionRequestBuilder2.default)(autocompletionRequest), {
-        input: value
+        input: value || propValue
       }), _this.fetchSuggestionsCallback);
     };
 
@@ -112,7 +115,7 @@ var GooglePlacesAutocomplete = function (_Component) {
 
       if (value.length > 0) {
         if (debo !== -1) {
-          this.debouncedFetchSuggestions(value);
+          this.debouncedFetchSuggestions();
         }
       } else {
         this.setState({ suggestions: [] });
@@ -166,8 +169,7 @@ var GooglePlacesAutocomplete = function (_Component) {
           inputStyle = _props.inputStyle,
           placeholder = _props.placeholder,
           renderInput = _props.renderInput,
-          required = _props.required,
-          propValue = _props.value;
+          required = _props.required;
 
 
       if (renderInput) {
@@ -183,9 +185,7 @@ var GooglePlacesAutocomplete = function (_Component) {
           type: 'text',
           placeholder: placeholder,
           required: required,
-          fetchSuggestions: function fetchSuggestions() {
-            return _this3.fetchSuggestions(propValue || value);
-          }
+          fetchSuggestions: this.fetchSuggestions
         });
       }
 
@@ -311,8 +311,9 @@ var GooglePlacesAutocomplete = function (_Component) {
     value: function handleKeyDown(event) {
       var _state2 = this.state,
           activeSuggestion = _state2.activeSuggestion,
-          suggestions = _state2.suggestions;
-      var value = this.props.value;
+          suggestions = _state2.suggestions,
+          value = _state2.value;
+      var propValue = this.props.value;
 
 
       switch (event.key) {
@@ -320,8 +321,8 @@ var GooglePlacesAutocomplete = function (_Component) {
           event.preventDefault();
           if (activeSuggestion !== null) {
             this.onSuggestionSelect(suggestions[activeSuggestion]);
-          } else if (value.length > 0) {
-            this.fetchSuggestions(value);
+          } else if (value.length > 0 || propValue.length > 0) {
+            this.fetchSuggestions();
           }
           break;
         case 'ArrowDown':
@@ -404,6 +405,7 @@ GooglePlacesAutocomplete.propTypes = {
   autocompletionRequest: _customPropTypes.autocompletionRequestType,
   debounce: _propTypes2.default.number,
   initialValue: _propTypes2.default.string,
+  value: _propTypes2.default.string,
   inputClassName: _propTypes2.default.string,
   inputStyle: _propTypes2.default.object,
   loader: _propTypes2.default.node,
@@ -420,6 +422,7 @@ GooglePlacesAutocomplete.defaultProps = {
   autocompletionRequest: {},
   debounce: -1,
   initialValue: '',
+  value: '',
   inputClassName: '',
   inputStyle: {},
   loader: null,
